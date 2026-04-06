@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -31,11 +31,7 @@ export default function TaskDetailScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
 
-  useEffect(() => {
-    loadTask();
-  }, [taskId]);
-
-  async function loadTask() {
+  const loadTask = useCallback(async () => {
     try {
       const res = await apiFetch(`/tasks/${taskId}`);
       const data = await res.json();
@@ -46,7 +42,11 @@ export default function TaskDetailScreen({ route, navigation }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [taskId, apiFetch, navigation]);
+
+  useEffect(() => {
+    loadTask();
+  }, [loadTask]);
 
   async function updateStatus(newStatus) {
     const statusAction = STATUS_FLOW[task.status];

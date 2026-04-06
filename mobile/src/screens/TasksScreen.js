@@ -30,11 +30,21 @@ export default function TasksScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState('active');
 
+  const loadTasks = useCallback(async () => {
+    try {
+      const res = await apiFetch('/tasks');
+      const data = await res.json();
+      setTasks(data);
+    } catch {
+      // Will retry on next interval
+    }
+  }, [apiFetch]);
+
   useEffect(() => {
     loadTasks();
     const interval = setInterval(loadTasks, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [loadTasks]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -51,21 +61,11 @@ export default function TasksScreen({ navigation }) {
     });
   }, [navigation]);
 
-  async function loadTasks() {
-    try {
-      const res = await apiFetch('/tasks');
-      const data = await res.json();
-      setTasks(data);
-    } catch {
-      // Will retry on next interval
-    }
-  }
-
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadTasks();
     setRefreshing(false);
-  }, []);
+  }, [loadTasks]);
 
   async function handleLogout() {
     Alert.alert('Logout', 'Are you sure you want to logout?', [

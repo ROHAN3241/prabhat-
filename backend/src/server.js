@@ -13,6 +13,8 @@ const userRoutes = require('./routes/users');
 const taskRoutes = require('./routes/tasks');
 const analyticsRoutes = require('./routes/analytics');
 
+const rateLimit = require('express-rate-limit');
+
 const app = express();
 const server = http.createServer(app);
 
@@ -21,6 +23,25 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later' },
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many login attempts, please try again later' },
+});
+
+app.use('/api', apiLimiter);
+app.use('/api/auth/login', authLimiter);
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
