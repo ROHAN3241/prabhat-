@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Prabhat Medical Worker",
+    "slug": "prabhat-medical-worker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#0d6efd"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0d6efd"
+      },
+      "package": "com.prabhatmedical.worker"
+    },
+    "extra": {
+      "serverUrl": "http://192.168.1.100:3000"
+    }
+  }
+}
